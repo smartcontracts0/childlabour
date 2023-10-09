@@ -1,0 +1,149 @@
+{
+	"compiler": {
+		"version": "0.8.21+commit.d9974bed"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [],
+				"stateMutability": "nonpayable",
+				"type": "constructor"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "entityAddress",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "enum Registration.EntityType",
+						"name": "entityType",
+						"type": "uint8"
+					}
+				],
+				"name": "EntityRegistered",
+				"type": "event"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "entities",
+				"outputs": [
+					{
+						"internalType": "enum Registration.EntityType",
+						"name": "entityType",
+						"type": "uint8"
+					},
+					{
+						"internalType": "bool",
+						"name": "isRegistered",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_entityAddress",
+						"type": "address"
+					}
+				],
+				"name": "getEntity",
+				"outputs": [
+					{
+						"internalType": "enum Registration.EntityType",
+						"name": "",
+						"type": "uint8"
+					},
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_entityAddress",
+						"type": "address"
+					},
+					{
+						"internalType": "enum Registration.EntityType",
+						"name": "_entityType",
+						"type": "uint8"
+					}
+				],
+				"name": "registerEntity",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_entityAddress",
+						"type": "address"
+					}
+				],
+				"name": "removeEntity",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"Registration.sol": "Registration"
+		},
+		"evmVersion": "shanghai",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": true,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"Registration.sol": {
+			"keccak256": "0x8de45dbb503661bbeec93277be623a49821261e681f13dd43cff7d51876d7b00",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://159c194bbf91fef93ea5090b6c6696f9a88dbbcd302951ed32423e7740851a34",
+				"dweb:/ipfs/QmXZGLkgAjvoQurkwHvAh8Qc2cwtiiGUXkkxrWEGDQLAgW"
+			]
+		}
+	},
+	"version": 1
+}

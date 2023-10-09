@@ -1,0 +1,70 @@
+{
+	"compiler": {
+		"version": "0.8.21+commit.d9974bed"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "getEntity",
+				"outputs": [
+					{
+						"internalType": "enum IRegistration.EntityType",
+						"name": "",
+						"type": "uint8"
+					},
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"ChildLabourDataManagement.sol": "IRegistration"
+		},
+		"evmVersion": "shanghai",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": true,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"ChildLabourDataManagement.sol": {
+			"keccak256": "0x9da0da93a6c4dcc33b884d27b7264179696059aef26086b8427fdde8d12f1d30",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://0ef3d6cfbad354d603e0f1934ad1b1585f1efc0cc4e01497e0e26494bc842f87",
+				"dweb:/ipfs/QmaF6XuxbCm3gjKkfJJGWpeKJ1Pm7vKgDzwV8Motf9n9ev"
+			]
+		}
+	},
+	"version": 1
+}

@@ -1,0 +1,13 @@
+import "hashes/sha256/512bitPacked" as sha256packed;
+
+def main(private field a, private field b, private field c, private field d) {
+    field[2] h = sha256packed([a, b, c, d]);
+    assert(h[0] == 25295375719849819427206500188138766613);
+    assert(h[1] == 64402633138834311413071177965570956862);
+    return;
+}
+
+    //89981221
+  //25295375719849819427206500188138766613
+  //64402633138834311413071177965570956862
+
