@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: MIT
+/////
 
 pragma solidity ^0.8.16;
 
 contract Registration {
-    enum EntityType {RegulatoryAuthority, whistleBlowers, InspectionAgent, DataAnalyst, Guardian, Oracle}
+    enum EntityType {Unregistered, RegulatoryAuthority, whistleBlowers, InspectionAgent, DataAnalyst, Guardian, Oracle}
     struct Entity {
         EntityType entityType;
         bool isRegistered;
@@ -17,7 +18,7 @@ contract Registration {
         require(entities[msg.sender].entityType == _entityType, "Only authorized entity can perform this action");
         _;
     }
-
+    //
     constructor() {
         // Register the regulatory authority upon contract deployment
         entities[msg.sender] = Entity({
