@@ -143,7 +143,7 @@ pragma solidity ^0.8.16;
     //**** Interfaces ****//
 
     interface IRegistration{
-        enum EntityType{RegulatoryAuthority, whistleBlowers, InspectionAgent, DataAnalyst, Guardian}
+        enum EntityType{RegulatoryAuthority, whistleBlowers, InspectionAgent, DataAnalyst, Guardian, Oracle}
         function getEntity(address) external returns(EntityType, bool);
     }
 
@@ -258,6 +258,12 @@ contract ChildLabourDataManagement{
         require(childRemediationData[_childId].guardian == msg.sender, "Only the assigned Guardian to this child can run this function");
         _;
     }
+
+    modifier onlyOracle{
+        (IRegistration.EntityType entitytype, bool isRegistered) = Registration.getEntity(msg.sender);
+        require(entitytype == IRegistration.EntityType.Oracle && isRegistered, "Only the Blockchain Oracle can run this function");
+        _;
+    }
     //**** Events ****//
     event NewViolationReport(uint256 indexed reportCount,address reporter, uint256 date, bytes32 reportDetails);
     event ViolationReportVerification(uint256 indexed reportCount, address inspector, bool isVerified, uint256 verificationDate);
@@ -266,7 +272,7 @@ contract ChildLabourDataManagement{
     event RemediationStarted(uint256 violationReportId, uint256 childId, uint256 remediationStartDate, uint256 remediationCompletionDate);
     event RemediationUpdate(uint256 violationReportId, uint256 childId, uint256 remediationUpdatedate, bytes32 reportUpdate);
     event RemediationCompleted(uint256 violationReportId, uint256 childId, uint256 remediationCompletionDate);
-    event Whitelisted(address entity, uint256 Date);
+    event Whitelisted(address user, uint256 Date);
     event AccessRevoked(address regulatoryAuthority, address entity, uint256 date);
     event VerifierUpdated(address regulatoryAuthority, address verifierSC, uint256 date);
 
@@ -317,7 +323,9 @@ contract ChildLabourDataManagement{
         emit ChildDataStored(reportChildrenCount[_violationReportId], _hashedName, _age, _gender, _violationReportId);
     }
 
-    function getChildData(uint256 _violationReportId, uint256 _childId) public onlyDataAnalyst returns(bytes32 hashedName, uint256 age, bytes1 gender, bytes32 reportipfshash){
+    function getChildData(uint256 _violationReportId, uint256 _childId) public returns(bytes32 hashedName, uint256 age, bytes1 gender, bytes32 reportipfshash){
+        (IRegistration.EntityType entitytype, bool isRegistered) = Registration.getEntity(msg.sender);
+        require(entitytype == IRegistration.EntityType.DataAnalyst && isRegistered || entitytype == IRegistration.EntityType.RegulatoryAuthority && isRegistered, "Only the Regulatory Authority and Data Analysts can run this function");
         require(_violationReportId >= 1 && _violationReportId <= reportCount, "Invalid Report ID");
         require(_childId >= 1 && _childId <= reportChildrenCount[_violationReportId], "Invalid Child ID");
         ChildData memory data = childData[_violationReportId][_childId];
@@ -391,17 +399,11 @@ contract ChildLabourDataManagement{
 
     //It is assumed that inspectors data analysts with the proof are able to access all reports via the DPRE
     //The accessWhitelist mapping will be used by the DPRE to verify that the caller is eligible for reencryption
-    function grantAccess(IVerifier.Proof memory proof) public returns(bool) {
+    function grantAccess(address _user) public onlyOracle {
 
-        bool r = Verifier.verifyTx(proof);
+            accessWhitelist[_user] = true;
+            emit Whitelisted(_user, block.timestamp);
 
-        if (r){
-            accessWhitelist[msg.sender] = true;
-            emit Whitelisted(msg.sender, block.timestamp);
-            return true;
-        } else {
-            return false;
-        }
     }
 
     //This decision can be made based on voting or by an arbitrator

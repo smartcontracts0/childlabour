@@ -33,11 +33,11 @@
 	},
 	"sources": {
 		"ChildLabourDataManagement.sol": {
-			"keccak256": "0xd6d3090adc30dff64722681d839cbcce35fcbfa503c6bef4dac94c92695998c9",
+			"keccak256": "0x58938ce70c03f6d2cdd21b90c19362e24b50229b6237c9903221e669fac32c59",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://04de48cbc149d30218aa0d59ebd913f76f039cf799f7b20c8b0a462dc57268d4",
-				"dweb:/ipfs/QmWtkjJQP4sFtF9HCeJMCJR2fgnbvd4LMiD2heGCyaSEu3"
+				"bzz-raw://cf9e1b02be0825cae5573e1438133bc1d2daaa01cace8502eaee8432e25bf8b7",
+				"dweb:/ipfs/QmaGe8TjKZrqxMQLSKCC74iwkQhB7LNeBaC3uD1WHTSF2p"
 			]
 		}
 	},

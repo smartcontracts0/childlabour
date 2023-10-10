@@ -3,7 +3,7 @@
 pragma solidity ^0.8.16;
 
 contract Registration {
-    enum EntityType {RegulatoryAuthority, whistleBlowers, InspectionAgent, DataAnalyst, Guardian}
+    enum EntityType {RegulatoryAuthority, whistleBlowers, InspectionAgent, DataAnalyst, Guardian, Oracle}
     struct Entity {
         EntityType entityType;
         bool isRegistered;
