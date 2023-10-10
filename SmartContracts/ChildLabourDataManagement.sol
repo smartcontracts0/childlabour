@@ -192,6 +192,7 @@ contract ChildLabourDataManagement{
         uint256 remediationStart;
         uint256 remediationCompletion;
         uint256 lastUpdated;
+        bytes32 updateReport;
         ChildStatus status;
     }
 
@@ -262,10 +263,12 @@ contract ChildLabourDataManagement{
     event ViolationReportVerification(uint256 indexed reportCount, address inspector, bool isVerified, uint256 verificationDate);
     event ChildDataStored(uint256 childId, bytes32 hashedName, uint256 age, bytes1 gender, uint256 reportId);
     event GuardianAssigned(uint256 childId, uint256 reportId, address guardian);
-    event RemediationStarted(uint256 childId, uint256 remediationStartDate, uint256 remediationCompletionDate);
-    event RemediationCompleted(uint256 childId, uint256 remediationCompletionDate);
-    event Whitelisted(address DataAnalyst, uint256 Date);
-    event AccessRevoked(address regulatoryAuthority, address dataAnalyst, uint256 date);
+    event RemediationStarted(uint256 violationReportId, uint256 childId, uint256 remediationStartDate, uint256 remediationCompletionDate);
+    event RemediationUpdate(uint256 violationReportId, uint256 childId, uint256 remediationUpdatedate, bytes32 reportUpdate);
+    event RemediationCompleted(uint256 violationReportId, uint256 childId, uint256 remediationCompletionDate);
+    event Whitelisted(address entity, uint256 Date);
+    event AccessRevoked(address regulatoryAuthority, address entity, uint256 date);
+    event VerifierUpdated(address regulatoryAuthority, address verifierSC, uint256 date);
 
    
    
@@ -351,7 +354,19 @@ contract ChildLabourDataManagement{
         childRemediationData[_childId].remediationCompletion = block.timestamp + _daysToRemediate * 1 seconds;
         childRemediationData[_childId].lastUpdated = block.timestamp;
 
-        emit RemediationStarted(_childId, block.timestamp, (block.timestamp + _daysToRemediate * 1 seconds));
+        emit RemediationStarted(_violationReportId, _childId, block.timestamp, (block.timestamp + _daysToRemediate * 1 seconds));
+    }
+
+    function remediationUpdate(uint256 _violationReportId, uint256 _childId, string memory _updateReport) public onlyGuardian(_childId){
+        ChildRemediation memory remediationdata = childRemediationData[_childId];
+        require(_violationReportId >= 1 && _violationReportId <= reportCount, "Invalid Report ID");
+        require(_childId >= 1 && _childId <= reportChildrenCount[_violationReportId], "Invalid Child ID");
+        require(remediationdata.status == ChildStatus.InRemediation, "This child is not currently in remediation");
+
+        childRemediationData[_childId].updateReport = bytes32(bytes(_updateReport));
+        childRemediationData[_childId].lastUpdated = block.timestamp;
+        emit RemediationUpdate(_violationReportId, _childId, block.timestamp, bytes32(bytes(_updateReport)));
+
     }
 
     function completeRemediation(uint256 _violationReportId, uint256 _childId) public onlyGuardian(_childId){
@@ -363,7 +378,7 @@ contract ChildLabourDataManagement{
         childRemediationData[_childId].status = ChildStatus.TakenCareOf;
         childRemediationData[_childId].lastUpdated = block.timestamp;
 
-        emit RemediationCompleted(_childId, block.timestamp);
+        emit RemediationCompleted(_violationReportId, _childId, block.timestamp);
     }
 
     function getChildStatus(uint256 _violationReportId, uint256 _childId) public onlyRegulatoryAuthority returns(ChildStatus, uint256, uint256, uint256){
@@ -376,7 +391,7 @@ contract ChildLabourDataManagement{
 
     //It is assumed that inspectors data analysts with the proof are able to access all reports via the DPRE
     //The accessWhitelist mapping will be used by the DPRE to verify that the caller is eligible for reencryption
-    function accessControl(IVerifier.Proof memory proof) public returns(bool) {
+    function grantAccess(IVerifier.Proof memory proof) public returns(bool) {
 
         bool r = Verifier.verifyTx(proof);
 
@@ -390,7 +405,7 @@ contract ChildLabourDataManagement{
     }
 
     //This decision can be made based on voting or by an arbitrator
-    function revokeAccess(uint256 , address _user) public onlyRegulatoryAuthority {
+    function revokeAccess( address _user) public onlyRegulatoryAuthority {
         accessWhitelist[_user] = false;
         emit AccessRevoked(msg.sender, _user, block.timestamp);
     }
@@ -398,6 +413,7 @@ contract ChildLabourDataManagement{
     //This function is used when the proof is changed/updated for security purposes
     function updateVerifier(address _verifier) public onlyRegulatoryAuthority{
         Verifier = IVerifier(_verifier);
+        emit VerifierUpdated(msg.sender, _verifier, block.timestamp);
     }
 
 }

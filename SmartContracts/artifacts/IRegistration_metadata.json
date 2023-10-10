@@ -51,18 +51,18 @@
 			"bytecodeHash": "ipfs"
 		},
 		"optimizer": {
-			"enabled": true,
+			"enabled": false,
 			"runs": 200
 		},
 		"remappings": []
 	},
 	"sources": {
 		"ChildLabourDataManagement.sol": {
-			"keccak256": "0x9da0da93a6c4dcc33b884d27b7264179696059aef26086b8427fdde8d12f1d30",
+			"keccak256": "0xd6d3090adc30dff64722681d839cbcce35fcbfa503c6bef4dac94c92695998c9",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://0ef3d6cfbad354d603e0f1934ad1b1585f1efc0cc4e01497e0e26494bc842f87",
-				"dweb:/ipfs/QmaF6XuxbCm3gjKkfJJGWpeKJ1Pm7vKgDzwV8Motf9n9ev"
+				"bzz-raw://04de48cbc149d30218aa0d59ebd913f76f039cf799f7b20c8b0a462dc57268d4",
+				"dweb:/ipfs/QmWtkjJQP4sFtF9HCeJMCJR2fgnbvd4LMiD2heGCyaSEu3"
 			]
 		}
 	},
