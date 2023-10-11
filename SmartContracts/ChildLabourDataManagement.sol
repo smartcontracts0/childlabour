@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-////
+
 library Pairing {
     struct G1Point {
         uint X;
@@ -143,7 +143,7 @@ pragma solidity ^0.8.16;
     //**** Interfaces ****//
 
     interface IRegistration{
-        enum EntityType{Unregistered, RegulatoryAuthority, whistleBlowers, InspectionAgent, DataAnalyst, Guardian, Oracle}
+        enum EntityType{RegulatoryAuthority, whistleBlowers, InspectionAgent, DataAnalyst, Guardian, Oracle}
         function getEntity(address) external returns(EntityType, bool);
     }
 
@@ -236,7 +236,7 @@ contract ChildLabourDataManagement{
 
     modifier onlywhistleBlowers{
         (IRegistration.EntityType entitytype, bool isRegistered) = Registration.getEntity(msg.sender);
-        require(entitytype == IRegistration.EntityType.whistleBlowers && isRegistered, "Only a registered whistleblower can run this function");
+        require(entitytype == IRegistration.EntityType.whistleBlowers && isRegistered, "Only the Liaison Officer can run this function");
         _;
     }
 
@@ -292,7 +292,6 @@ contract ChildLabourDataManagement{
 
     //Child labor agents or investigators with expertise in child protection and labor laws review the initial report. 
     //They assess the credibility of the report and determine whether further investigation is warranted.
-    
     function getViolationReport(uint256 _violationReportId) public onlyInspectionAgent returns(address reporter, uint256 date, bytes32 reportDetails){
         require(_violationReportId >= 1 && _violationReportId <= reportCount, "Invalid Report ID");
         ViolationReport memory report = violationReports[_violationReportId];
@@ -310,12 +309,10 @@ contract ChildLabourDataManagement{
 
     //Note: The name should not be hashed on-chain because the decoded input will be publicaly exposed
     function storeChildData(bytes32 _hashedName, uint256 _age, bytes1 _gender, uint256 _violationReportId) public onlyInspectionAgent{
-        ViolationReport memory report = violationReports[_violationReportId];
         require(_hashedName != bytes32(0), "Invalid hashed name");
         require(_age > 0 , "Invalid Age");
         require(bytes1(_gender) == "M" || bytes1(_gender) == "F", "Invalid Gender");
         require(_violationReportId >= 1 && _violationReportId <= reportCount, "Invalid Report ID");
-        require(report.isVerified, "Cannot store child data because the violation report Id has not been verified");
 
         reportChildrenCount[_violationReportId] ++;
         childData[_violationReportId][reportChildrenCount[_violationReportId]] = ChildData(reportChildrenCount[_violationReportId], _hashedName, _age, _gender, _violationReportId, ChildStatus.Spotted);
@@ -328,12 +325,11 @@ contract ChildLabourDataManagement{
 
     function getChildData(uint256 _violationReportId, uint256 _childId) public returns(bytes32 hashedName, uint256 age, bytes1 gender, bytes32 reportipfshash){
         (IRegistration.EntityType entitytype, bool isRegistered) = Registration.getEntity(msg.sender);
-        ChildData memory data = childData[_violationReportId][_childId];
-        ViolationReport memory report = violationReports[_violationReportId];
         require(entitytype == IRegistration.EntityType.DataAnalyst && isRegistered || entitytype == IRegistration.EntityType.RegulatoryAuthority && isRegistered, "Only the Regulatory Authority and Data Analysts can run this function");
         require(_violationReportId >= 1 && _violationReportId <= reportCount, "Invalid Report ID");
         require(_childId >= 1 && _childId <= reportChildrenCount[_violationReportId], "Invalid Child ID");
-        require(report.isVerified, "Cannot retrieve child data because the violation report Id has not been verified");
+        ChildData memory data = childData[_violationReportId][_childId];
+        ViolationReport memory report = violationReports[_violationReportId];
 
 
         return(data.hashedName, data.age, data.gender, report.ipfsHash);
@@ -341,11 +337,9 @@ contract ChildLabourDataManagement{
 
     function assignGuardian(uint256 _violationReportId, uint256 _childId, address _guardian) public onlyRegulatoryAuthority{
         ChildData memory data = childData[_violationReportId][_childId];
-        ViolationReport memory report = violationReports[_violationReportId];
         require(data.status == ChildStatus.Spotted, "This child Id does not exist or has already been assigned a guardian");
         require(_violationReportId >= 1 && _violationReportId <= reportCount, "Invalid Report ID");
         require(_childId >= 1 && _childId <= reportChildrenCount[_violationReportId], "Invalid Child ID");
-        require(report.isVerified, "Cannot assign a guardian because the violation report Id has not been verified");
 
 
         childRemediationData[_childId].guardian = _guardian;
@@ -425,3 +419,4 @@ contract ChildLabourDataManagement{
     }
 
 }
+
